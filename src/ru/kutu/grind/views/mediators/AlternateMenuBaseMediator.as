@@ -7,33 +7,44 @@ package ru.kutu.grind.views.mediators {
 	import org.osmf.net.StreamingItem;
 	import org.osmf.traits.AlternativeAudioTrait;
 	import org.osmf.traits.MediaTraitType;
+
+        import robotlegs.bender.framework.api.IInjector;
 	
 	import ru.kutu.grind.events.ControlBarMenuChangeEvent;
 	import ru.kutu.grind.views.api.IAlternateMenuButton;
+        import ru.kutu.grind.views.api.helpers.IVisible;
 	import ru.kutu.grind.vos.LanguageSelectorVO;
 	import ru.kutu.grind.vos.SelectorVO;
+        import ru.kutu.grind.config.PlayerConfiguration;
 	
 	public class AlternateMenuBaseMediator extends ControlBarMenuBaseMediator {
 		
 		protected static var DEFAULT_AUDIO_LABEL:String = "defaultAudioLabel";
 		
 		[Inject] public var view:IAlternateMenuButton;
+                [Inject] public var injector:IInjector;
 		
 		protected var alternateTrait:AlternativeAudioTrait;
 		
 		private var _requiredTraits:Vector.<String> = new <String>[MediaTraitType.ALTERNATIVE_AUDIO];
+                protected var controlBarHideAlternate:Boolean;
 		
 		override protected function get requiredTraits():Vector.<String> {
+                        var configuration:PlayerConfiguration = injector.getInstance(PlayerConfiguration);
+                        controlBarHideAlternate = configuration.controlBarHideAlternate;
 			return _requiredTraits;
 		}
 		
 		override protected function processRequiredTraitsAvailable(element:MediaElement):void {
 			alternateTrait = element.getTrait(MediaTraitType.ALTERNATIVE_AUDIO) as AlternativeAudioTrait;
-			if (alternateTrait) {
+			if (alternateTrait && !controlBarHideAlternate) {
 				alternateTrait.addEventListener(AlternativeAudioEvent.NUM_ALTERNATIVE_AUDIO_STREAMS_CHANGE, onNumStreamChange);
 				alternateTrait.addEventListener(AlternativeAudioEvent.AUDIO_SWITCHING_CHANGE, onSwitchChange);
 				onNumStreamChange();
 				view.visible = true;
+			}
+			else {
+				view.visible = false;
 			}
 		}
 		

@@ -9,6 +9,8 @@ package ru.kutu.grind.config {
 		public var metadata:Object = {};
 		public var resource:Object = {streamType:StreamType.LIVE_OR_RECORDED};
 		public var controlBarAutoHide:Boolean = true;
+		public var controlBarHidePlayPause:Boolean = false;
+		public var controlBarHideAlternate:Boolean = false;
 		public var controlBarFullScreenAutoHide:Boolean = true;
 		public var controlBarAutoHideTimeout:Number = 3.0;
 		public var scaleMode:String = ScaleMode.LETTERBOX;
